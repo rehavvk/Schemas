@@ -95,7 +95,14 @@ namespace Scaffold.Schemas.Editor
         public virtual void DrawBody()
         {
 #if ODIN_INSPECTOR_3_1
-            objectTree.Draw(false);
+            EditorGUI.BeginChangeCheck();
+            {
+                objectTree.Draw(false);
+            }
+            if (EditorGUI.EndChangeCheck())
+            {
+                Refresh();
+            }
 #else
             var childProps = GetChildProperties(Property);
             foreach (var child in childProps)
@@ -119,6 +126,13 @@ namespace Scaffold.Schemas.Editor
 
                 yield return childProperty.Copy();
             }
+        }
+
+        public void Refresh()
+        {
+            Property.serializedObject.ApplyModifiedProperties();
+            EditorUtility.SetDirty(Property.serializedObject.targetObject);
+            Property.serializedObject.Update();
         }
     }
 }

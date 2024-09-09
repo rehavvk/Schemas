@@ -52,7 +52,14 @@ namespace Scaffold.Schemas.Editor
             serializedObject.Update();
             
 #if ODIN_INSPECTOR_3_1
-            DrawDefaultInspector();
+            EditorGUI.BeginChangeCheck();
+            {
+                DrawDefaultInspector();
+            }
+            if (EditorGUI.EndChangeCheck())
+            {
+                Refresh();
+            }
 #else
             DrawDefaultProperties();
 #endif
